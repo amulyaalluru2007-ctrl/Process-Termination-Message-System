@@ -48,20 +48,6 @@ Compiler: GCC
 APIs: POSIX / Linux System Calls
 Version Control: Git & GitHub
 
-📂 Suggested Project Structure
-Process-Termination-Message-System/
-│
-├── src/
-│   ├── main.c
-│   ├── process.c
-│   └── process.h
-│
-├── docs/
-│   └── project-documentation.md
-│
-├── README.md
-│
-└── .gitignore
 
 🖥️ Sample Output
 Parent Process PID: 4521

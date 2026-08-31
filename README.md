@@ -14,26 +14,6 @@ Display the child's exit status.
 Detect whether a process was terminated by a signal.
 Prevent terminated child processes from becoming zombie processes.
 
-⚙️ How It Works
-                Parent Process
-                     |
-          Creates Multiple Children
-             /       |       \
-            /        |        \
-       Child 1    Child 2    Child 3
-       Task A     Task B     Task C
-          |          |          |
-       Exit()     Exit()    Signal/Exit
-          \          |          /
-           \         |         /
-             Parent waits
-                  |
-             wait()/waitpid()
-                  |
-        Collect termination status
-                  |
-          Display termination
-              information
               
 The parent process creates multiple child processes using fork().
 Each child performs a different task.

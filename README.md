@@ -1,5 +1,6 @@
 📌 Project Overview
-In a multi-process environment, an application may create multiple child processes to perform different tasks. When a child process finishes execution, the parent process needs to know which process terminated, whether it terminated normally or abnormally, and how it terminated.
+
+In a multi-process environment, an application may create multiple child processes to perform different tasks.When a child process finishes execution, the parent process needs to know which process terminated, whether it terminated normally or abnormally, and how it terminated.
 The Process Termination Message System provides a simple mechanism for detecting child-process termination and displaying this information to the parent process.
 The project uses Linux process-management system calls such as fork(), wait(), and waitpid() to create and monitor child processes.
 
@@ -27,12 +28,14 @@ Exit status, if applicable
 Signal information, if applicable
 The parent collects the child's status so that the terminated child does not remain as a zombie.
 
+
+Project Description:
+The program creates three child processes from a parent process. Each child demonstrates a different termination condition.
+Child 1: Normal termination with exit status 0
+Child 2: Normal termination with exit status 5
+Child 3: Termination using SIGTERM
+
 🧠 OS Concepts Used
-Process Creation
-Parent-Child Processes
-Process Lifecycle
-Process Termination
-Process Synchronization
 Exit Status
 Signals
 fork()
@@ -41,52 +44,39 @@ waitpid()
 exit()
 Zombie Process Prevention
 
-🛠️ Technologies Used
-Operating System: Linux / Ubuntu
-Programming Language: C
-Compiler: GCC
-APIs: POSIX / Linux System Calls
-Version Control: Git & GitHub
+Function 	Purpose
+fork()-	Creates a child process
+wait()-	Waits for a child to terminate and collects its status
+exit()-	Terminates a process with an exit status
+kill()-	Sends a signal to a process
+getpid()-	Obtains the current process ID
+WIFEXITED()-	Checks whether a child terminated normally
+WEXITSTATUS()-	Obtains the exit status of a normally terminated child
+WIFSIGNALED()-	Checks whether a child was terminated by a signal
+WTERMSIG()-	Obtains the signal number that terminated the child
+SIGTERM	Termination signal used in the signal-based termination demonstration
 
+Termination Status Logic:
+For normal termination:
 
-🖥️ Sample Output
-Parent Process PID: 4521
+WIFEXITED(status)
+        ↓
+     TRUE
+        ↓
+WEXITSTATUS(status)
+        ↓
+Exit value
 
-Created Child 1 | PID: 4522
-Created Child 2 | PID: 4523
-Created Child 3 | PID: 4524
+For signal termination:
 
-Child Process Terminated
-PID: 4522
-Termination Type: Normal
-Exit Status: 0
+WIFSIGNALED(status)
+        ↓
+     TRUE
+        ↓
+WTERMSIG(status)
+        ↓
+Signal number
 
-Child Process Terminated
-PID: 4523
-Termination Type: Normal
-Exit Status: 5
-
-Child Process Terminated
-PID: 4524
-Termination Type: Signal
-Signal: SIGTERM
-
-All child processes have been collected.
-No zombie processes remain.
-
-👥 Team
-KernalCrew_OSSP
-Roll Number	Team Member
-2520030032	A. Amulya
-2520030275	Kunal Shahane
-2520030600	Ch. Gayatri sri harshita
-
-🚀 Future Scope
-Add a graphical interface for displaying process information.
-Support monitoring of a larger number of child processes.
-Record termination events in a log file.
-Provide timestamps for process creation and termination.
-Add more detailed signal and exit-status reporting.
 
 📜 Conclusion
 The Process Termination Message System demonstrates how a Linux parent process can monitor and respond to the termination of its child processes. By using process-creation, synchronization, termination, and signal-handling mechanisms, the project provides practical understanding of process management in Linux. It also ensures that terminated child processes are properly collected, preventing zombie processes.

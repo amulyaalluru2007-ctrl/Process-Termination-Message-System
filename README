@@ -1,82 +1,326 @@
-📌 Project Overview
+# Process Termination Command Center
 
-In a multi-process environment, an application may create multiple child processes to perform different tasks.When a child process finishes execution, the parent process needs to know which process terminated, whether it terminated normally or abnormally, and how it terminated.
-The Process Termination Message System provides a simple mechanism for detecting child-process termination and displaying this information to the parent process.
-The project uses Linux process-management system calls such as fork(), wait(), and waitpid() to create and monitor child processes.
+A menu-driven **Operating Systems process monitoring and termination analysis system** developed in C using Linux process-management and signal-handling system calls.
 
-🎯 Objectives
-Create multiple child processes.
-Allow each child process to perform a different task.
-Detect when a child process terminates.
-Use wait() or waitpid() to collect termination status.
-Display the PID of the terminated process.
-Identify normally and abnormally terminated processes.
-Display the child's exit status.
-Detect whether a process was terminated by a signal.
-Prevent terminated child processes from becoming zombie processes.
+The project demonstrates how a parent process creates and monitors child processes, detects how they terminate, collects their termination status using `waitpid()`, and generates detailed process reports.
 
-              
-The parent process creates multiple child processes using fork().
-Each child performs a different task.
-After completing its task, a child terminates using exit() or may be terminated by a signal.
-The parent uses wait() or waitpid() to detect the terminated child.
-The termination status is analyzed.
-The system displays:
-Terminated process PID
-Normal/abnormal termination
-Exit status, if applicable
-Signal information, if applicable
-The parent collects the child's status so that the terminated child does not remain as a zombie.
+---
 
+## 📌 Project Overview
 
-Project Description:
-The program creates three child processes from a parent process. Each child demonstrates a different termination condition.
-Child 1: Normal termination with exit status 0
-Child 2: Normal termination with exit status 5
-Child 3: Termination using SIGTERM
+The **Process Termination Command Center** simulates different system services as child processes.
 
-🧠 OS Concepts Used
-Exit Status
-Signals
-fork()
-wait()
-waitpid()
-exit()
-Zombie Process Prevention
+A parent process acts as a **Process Monitor** and:
 
-Function 	Purpose
-fork()-	Creates a child process
-wait()-	Waits for a child to terminate and collects its status
-exit()-	Terminates a process with an exit status
-kill()-	Sends a signal to a process
-getpid()-	Obtains the current process ID
-WIFEXITED()-	Checks whether a child terminated normally
-WEXITSTATUS()-	Obtains the exit status of a normally terminated child
-WIFSIGNALED()-	Checks whether a child was terminated by a signal
-WTERMSIG()-	Obtains the signal number that terminated the child
-SIGTERM	Termination signal used in the signal-based termination demonstration
+* Creates child processes using `fork()`
+* Executes different simulated service events
+* Waits for child termination using `waitpid()`
+* Detects normal and signal-based termination
+* Extracts exit status using `WEXITSTATUS()`
+* Identifies terminating signals using `WTERMSIG()`
+* Reaps terminated child processes
+* Prevents zombie processes
+* Maintains process termination history
+* Displays process statistics and reports
 
-Termination Status Logic:
-For normal termination:
+The project contains five simulated system events:
 
-WIFEXITED(status)
+1. Data Processing Service
+2. File Backup Service
+3. Network Service Failure
+4. Database Service
+5. Security Monitoring Service
+
+The Network Service Failure event intentionally terminates itself using `SIGTERM` to demonstrate abnormal process termination.
+
+---
+
+## 🎯 Objectives
+
+* Understand Linux process creation using `fork()`
+* Learn parent-child process relationships
+* Understand process termination
+* Demonstrate normal and abnormal process termination
+* Learn how `waitpid()` collects child process status
+* Understand Linux termination status macros
+* Demonstrate signal-based process termination
+* Understand process reaping and zombie prevention
+* Maintain and display process execution history
+
+---
+
+## 🛠️ Technologies Used
+
+| Technology      | Purpose                         |
+| --------------- | ------------------------------- |
+| C               | Core programming language       |
+| Linux / Ubuntu  | Execution environment           |
+| `fork()`        | Child process creation          |
+| `waitpid()`     | Waiting for child termination   |
+| `exit()`        | Normal process termination      |
+| `signal.h`      | Signal handling                 |
+| `SIGTERM`       | Simulated abnormal termination  |
+| `WIFEXITED()`   | Checks normal termination       |
+| `WEXITSTATUS()` | Retrieves exit status           |
+| `WIFSIGNALED()` | Checks signal-based termination |
+| `WTERMSIG()`    | Retrieves terminating signal    |
+
+---
+
+## 🧩 System Architecture
+
+```text
+                    ┌─────────────────────────────┐
+                    │  Process Termination        │
+                    │     Command Center          │
+                    └──────────────┬──────────────┘
+                                   │
+                    ┌──────────────▼──────────────┐
+                    │        Main Menu            │
+                    └──────────────┬──────────────┘
+                                   │
+                 ┌─────────────────┴─────────────────┐
+                 │                                   │
+        ┌────────▼────────┐                ┌─────────▼─────────┐
+        │ Process Event   │                │ Termination Report│
+        │ Simulator       │                │ Center            │
+        └────────┬────────┘                └─────────┬─────────┘
+                 │                                   │
+        ┌────────▼──────────┐              ┌─────────┴─────────┐
+        │ Select Event      │              │ Latest Report     │
+        │ 1 - Data          │              │ All Events        │
+        │ 2 - Backup        │              │ Statistics        │
+        │ 3 - Network       │              └───────────────────┘
+        │ 4 - Database      │
+        │ 5 - Security      │
+        └────────┬──────────┘
+                 │
+            ┌────▼─────┐
+            │  fork()  │
+            └────┬─────┘
+                 │
+          ┌──────┴──────┐
+          │             │
+     ┌────▼────┐   ┌────▼─────┐
+     │  Child  │   │  Parent  │
+     │ Process │   │ Process  │
+     └────┬────┘   └────┬─────┘
+          │             │
+       Executes      waitpid()
+       Event            │
+          │             │
+          └──────┬──────┘
+                 │
+        ┌────────▼────────┐
+        │ Termination     │
+        │ Analysis        │
+        └────────┬────────┘
+                 │
+        ┌────────┴────────┐
+        │                 │
+   Normal Exit       Signal Exit
+   WIFEXITED()      WIFSIGNALED()
+        │                 │
+   WEXITSTATUS()      WTERMSIG()
+        │                 │
+        └────────┬────────┘
+                 │
+          Process Reaped
+                 │
+        Zombie Process: NO
+```
+
+---
+
+## ⚙️ How It Works
+
+### 1. Process Creation
+
+When an event is selected, the program calls:
+
+```c
+pid = fork();
+```
+
+This creates a child process.
+
+The child process performs the selected task while the parent process monitors it.
+
+---
+
+### 2. Child Process Execution
+
+Each event represents a different system service.
+
+For example, the Data Processing Service simulates:
+
+```text
+Initializing data processing
         ↓
-     TRUE
+Reading records
         ↓
-WEXITSTATUS(status)
+Processing 1000 records
         ↓
-Exit value
+Data processing completed
+        ↓
+exit(10)
+```
 
-For signal termination:
+The program uses different exit codes for different successful services.
 
+---
+
+### 3. Abnormal Termination
+
+The Network Service Failure demonstrates signal-based termination.
+
+The child process calls:
+
+```c
+raise(SIGTERM);
+```
+
+This causes the process to terminate using `SIGTERM`, allowing the parent to detect abnormal termination.
+
+---
+
+### 4. Parent Process Monitoring
+
+The parent waits for the child using:
+
+```c
+terminated_pid = waitpid(pid, &status, 0);
+```
+
+This ensures that the parent receives the child's termination information and properly reaps the child process.
+
+---
+
+### 5. Termination Analysis
+
+The program checks whether the child terminated normally:
+
+```c
+if (WIFEXITED(status))
+```
+
+If the process exited normally, the exit code is retrieved using:
+
+```c
+WEXITSTATUS(status);
+```
+
+For signal-based termination, the program uses:
+
+```c
 WIFSIGNALED(status)
-        ↓
-     TRUE
-        ↓
-WTERMSIG(status)
-        ↓
-Signal number
+```
+
+and retrieves the signal number using:
+
+```c
+WTERMSIG(status);
+```
+
+---
+
+## 📊 Process Reports
+
+The project stores information about every executed event using an `EventReport` structure.
+
+The stored information includes:
+
+* Event number
+* Child PID
+* Parent PID
+* Termination type
+* Exit status
+* Signal number
+* Execution status
+* Reaping status
+
+### Available Reports
+
+#### Latest Event Report
+
+Displays information about the most recently executed event.
+
+#### All Executed Events
+
+Displays the execution history of all events.
+
+#### Process Statistics
+
+Displays:
+
+```text
+Events Executed
+Normal Terminations
+Signal Terminations
+Processes Reaped
+Zombie Processes
+Monitoring Status
+```
+
+---
+
+## 🚀 Installation & Execution
+
+### Prerequisites
+
+You need:
+
+* Linux / Ubuntu
+* GCC compiler
+* Basic terminal access
+
+### Clone the Repository
+
+```bash
+git clone https://github.com/YOUR-USERNAME/process-termination-command-center.git
+cd process-termination-command-center
+```
+
+### Compile
+
+```bash
+gcc process_termination.c -o process_termination
+```
+
+### Run
+
+```bash
+./process_termination
+```
+
+---
 
 
-📜 Conclusion
-The Process Termination Message System demonstrates how a Linux parent process can monitor and respond to the termination of its child processes. By using process-creation, synchronization, termination, and signal-handling mechanisms, the project provides practical understanding of process management in Linux. It also ensures that terminated child processes are properly collected, preventing zombie processes.
+## 🔍 Key System Calls & Functions
+
+| Function    | Purpose                               |
+| ----------- | ------------------------------------- |
+| `fork()`    | Creates a new child process           |
+| `waitpid()` | Waits for a specific child process    |
+| `getpid()`  | Gets the current process ID           |
+| `getppid()` | Gets the parent process ID            |
+| `exit()`    | Terminates a process normally         |
+| `raise()`   | Sends a signal to the calling process |
+| `sleep()`   | Simulates task execution time         |
+
+---
+
+## 📌 Learning Outcomes
+
+After completing this project, the user should be able to:
+
+* Create processes using `fork()`
+* Differentiate between parent and child processes
+* Monitor child process termination
+* Interpret process exit statuses
+* Handle signal-based termination
+* Use `waitpid()` for process synchronization
+* Prevent zombie processes by reaping children
+* Build a menu-driven Linux process monitoring application
+
+---
